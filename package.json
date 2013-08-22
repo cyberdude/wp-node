@@ -1,16 +1,29 @@
 {
   "name": "wp-node",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "description": "Caches Worpress in mongo using WordPress Jetpack JSON API",
   "main": "index.js",
   "scripts": {
     "test": "node ./test/index.js"
   },
-  "repository": "git://github.com/cyberdude/try-url.git",
+  "repository": "git://github.com/cyberdude/wp-node.git",
   "keywords": [
-    "url",
-    "try"
+    "wordpress",
+    "cache",
+    "Jetpack",
+    "json",
+    "mongodb"
   ],
   "author": "Arnaldo Capo <hello@arnaldocapo.com>",
+   "contributors": [
+      {
+        "name": "Ian Momyer",
+        "email": "imomyer@directv.com"
+      },
+      {
+        "name": "Lex Szentmiklosy",
+        "email": "LSzentmiklosy@DIRECTV.com"
+      }
+  ],
   "license": "MIT"
 }
