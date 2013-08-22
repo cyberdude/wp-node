@@ -1,0 +1,16 @@
+{
+  "name": "wp-node",
+  "version": "0.0.0",
+  "description": "Caches Worpress in mongo using WordPress Jetpack JSON API",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/index.js"
+  },
+  "repository": "git://github.com/cyberdude/try-url.git",
+  "keywords": [
+    "url",
+    "try"
+  ],
+  "author": "Arnaldo Capo <hello@arnaldocapo.com>",
+  "license": "MIT"
+}
