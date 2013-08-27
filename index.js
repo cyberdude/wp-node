@@ -1,97 +1,87 @@
 
-var request = require('request')
-	, ourUrls = [];
+var request = require('request');
 
 function wpnode(options, fn) {
 
-	this.TTL = 30;
+	this.TTL = options.TTL || 3;
 
 	var url = options.url
 		, db = options.db;
 
-
 		//Go Straight to mongo
 		db.collection('cache', function(err, collection) {
-			collection.findOne({id: url}, function(err, item) {
-			
+			collection.findOne({_id: url}, function(err, item) {
+
 				if (!item) {
-					console.log('Getting cache for' + url);
-					// request start
-					request.get({
-						url: url
-					}, function(e, r, b){
-
-						b = JSON.parse(b);
-
-						var cache_object = {
-							id: url, 
-							content: b,
-							wp_timestamp: +new Date()
-						}
-
-						db.collection('cache', function(err, collection) {
-			        collection.insert(cache_object, {safe:true}, function(err, result) {
-			            if (err) {
-			            	return err;
-			            } else {
-			                console.log('Success: ' + JSON.stringify(result));
-			                fn(result[0].content);
-			            }
-			    		});
-		    		});
-					}); //request end
+					console.log('Getting fresh content for ' + url);
+					wpnode.processRequest({
+						request:{
+								url: url
+							},
+						db: db,
+						callback: fn
+					});
+					
 				} else {
 
 					//Check if we are over the cache limit
-					console.log(item.wp_timestamp);
-
 					var currentTime = +new Date();
 
 					if ( ((currentTime - item.wp_timestamp)/1000) > this.TTL) {
-						console.log('Getting fresh content for ' + url);
+						
+						console.log('Removing and getting fresh content for ' + url);
 
+						db.collection('cache', function(err, collection) {
+        			collection.remove({_id:url}, {safe:true}, function(err, result) {
+        				if (err)
+        					console.log(err);
+        					console.log(result);
 
+								wpnode.processRequest({
+									request:{
+											url: url
+										},
+										db: db,
+										callback: fn
+								});
+							})
+        		});
+
+					} else {
+						console.log('Getting cache for ' + url);
+						fn(item.content);
 					}
-
-
-
-					fn(item.content);
 
 				}
 			});
 		});
-/*
-		
-
-			
-
-			db.collection('cache', function(err, collection) {
-		        collection.insert(cache_object, {safe:true}, function(err, result) {
-		            if (err) {
-		            	return err;
-		            } else {
-		                console.log('Success: ' + JSON.stringify(result));
-		                fn(result[0].content);
-		            }
-		    	});
-	    	});
-			
-		});
-		
-*/
 }
 
-wpnode.clearBot = function(url, db) {
-	console.log('Clearing Cache');
-	db.collection('cache', function(err, collection) {
-        collection.findOne({id: url}, function(err, item) {
-            if (err)
+wpnode.processRequest = function(obj) {
+	// request start
+		request.get(obj.request, function(e, r, b){
+
+			b = JSON.parse(b);
+
+			var cache_object = {
+				_id: obj.request.url, 
+				content: b,
+				wp_timestamp: +new Date()
+			}
+
+			obj.db.collection('cache', function(err, collection) {
+        collection.insert(cache_object, {safe:true}, function(err, result) {
+            if (err) {
             	console.log(err);
-
-            console.log('Removing cache for ' + url);
-
-
-        });
-    });
+            	if (err.code == 11000)
+            		obj.callback({error: err.code});
+            } else {
+                console.log('Success: ' + JSON.stringify(result));
+                obj.callback(result[0].content);
+            }
+    		});
+  		});
+		}); //request end
 }
+
 module.exports = wpnode;
