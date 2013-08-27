@@ -1,6 +1,6 @@
 {
   "name": "wp-node",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Caches Worpress in mongo using WordPress Jetpack JSON API",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "request": "~2.27.0"
+    "request": "2.27.0"
   }
 }
