@@ -1,7 +1,11 @@
 
 var request = require('request');
 
-function wpnode(options, fn) {
+function WP_Node() {
+
+}
+
+WP_Node.prototype.cache = function(options, fn) {
 
 	this.TTL = options.TTL || 3;
 
@@ -57,7 +61,7 @@ function wpnode(options, fn) {
 		});
 }
 
-wpnode.processRequest = function(obj) {
+WP_Node.prototype.processRequest = function(obj) {
 	// request start
 		request.get(obj.request, function(e, r, b){
 
@@ -83,5 +87,6 @@ wpnode.processRequest = function(obj) {
   		});
 		}); //request end
 }
+var wpnode = new WP_Node();
 
 module.exports = wpnode;
