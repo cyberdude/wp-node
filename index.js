@@ -2,12 +2,12 @@
 var request = require('request');
 
 function WP_Node() {
-
+  this.TTL = 1;
 }
 
 WP_Node.prototype.cache = function(options, fn) {
-
-	this.TTL = options.TTL || 3;
+  var self = this;
+	self.TTL = options.TTL || self.TTL;
 
 	var url = options.url
 		, db = options.db;
@@ -18,7 +18,7 @@ WP_Node.prototype.cache = function(options, fn) {
 
 				if (!item) {
 					console.log('Getting fresh content for ' + url);
-					wpnode.processRequest({
+					self.processRequest({
 						request:{
 								url: url
 							},
@@ -31,7 +31,7 @@ WP_Node.prototype.cache = function(options, fn) {
 					//Check if we are over the cache limit
 					var currentTime = +new Date();
 
-					if ( ((currentTime - item.wp_timestamp)/1000) > this.TTL) {
+          if ( ((currentTime - item.wp_timestamp)/1000) > self.TTL) {
 						
 						console.log('Removing and getting fresh content for ' + url);
 
@@ -41,7 +41,7 @@ WP_Node.prototype.cache = function(options, fn) {
         					console.log(err);
         					console.log(result);
 
-								wpnode.processRequest({
+								self.processRequest({
 									request:{
 											url: url
 										},
