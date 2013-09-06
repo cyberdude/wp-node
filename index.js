@@ -1,4 +1,3 @@
-
 var request = require('request');
 
 function WP_Node() {
