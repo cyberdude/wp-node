@@ -1,7 +1,7 @@
 var request = require('request');
 
 function WP_Node() {
-  this.TTL = 1;
+  this.TTL = 5;
 }
 
 WP_Node.prototype.cache = function(options, fn) {
@@ -64,7 +64,16 @@ WP_Node.prototype.processRequest = function(obj) {
   // request start
     request.get(obj.request, function(e, r, b){
 
-      b = JSON.parse(b);
+      try {
+        b = JSON.parse(b);
+      } catch (ex) {
+        
+        console.log(ex);
+        obj.callback({error: ex});
+
+        return;
+      }
+      
 
       var cache_object = {
         _id: obj.request.url, 
