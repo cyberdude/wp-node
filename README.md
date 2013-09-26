@@ -1,5 +1,4 @@
 # wp-node
-=======
 
 Caches WordPress in mongo using a JSON API.
 
@@ -25,7 +24,7 @@ After you receive the object you can do anything you need in your views.
 
 ```
 
-### Seting a time to live
+### Setting a time to live
 
 ```javascript 
   wpnode.setGlobalsOptions({
