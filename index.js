@@ -7,7 +7,7 @@ function WP_Node(options) {
 
 }
 
-WP_Node.prototype.setGlobalsOptions = function(options) {
+WP_Node.prototype.setGlobalOptions = function(options) {
   for(var key in options)
     this[key] = options[key];
 }

@@ -27,7 +27,7 @@ After you receive the object you can do anything you need in your views.
 ### Setting a time to live
 
 ```javascript 
-  wpnode.setGlobalsOptions({
+  wpnode.setGlobalOptions({
     TTL: 86400  //Cache time is in seconds.  This will cache the data for a day
   })
 ```
