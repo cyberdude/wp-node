@@ -21,7 +21,8 @@ WP_Node.prototype.cache = function(options, fn) {
   console.log('cache is')
 
   var url = options.url
-    , db = options.db;
+    , db = options.db
+    , qs = options.qs || {};
 
     //Go Straight to mongo
     db.collection('cache', function(err, collection) {
@@ -31,7 +32,8 @@ WP_Node.prototype.cache = function(options, fn) {
           console.log('Getting fresh content for ' + url);
           self.processRequest({
             request:{
-                url: url
+                url: url,
+                qs: qs
               },
             db: db,
             callback: fn
@@ -54,7 +56,8 @@ WP_Node.prototype.cache = function(options, fn) {
 
                 self.processRequest({
                   request:{
-                      url: url
+                      url: url,
+                      qs: qs
                     },
                     db: db,
                     callback: fn
@@ -74,6 +77,10 @@ WP_Node.prototype.cache = function(options, fn) {
 
 WP_Node.prototype.processRequest = function(obj) {
   // request start
+  console.log('herebro')
+  console.log(obj.request);
+  console.log('herebro');
+  
     request.get(obj.request, function(e, r, b){
 
       try {
