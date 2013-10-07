@@ -29,6 +29,6 @@ After you receive the object you can do anything you need in your views.
 ```javascript 
   wpnode.setGlobalOptions({
     TTL: 86400,  //Cache time is in seconds.  This will cache the data for a day
-    logger: false (default) //Turn on for debug mode
+    logger: false //(default) Turn on for debug mode
   })
 ```
