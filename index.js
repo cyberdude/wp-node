@@ -1,10 +1,14 @@
 var request = require('request');
 
-function WP_Node(options) {
+function WP_Node() {
   //Defaults
   this.TTL = 5400;
   this.logger = false;
 
+}
+WP_Node.prototype.log = function(msg) {
+  if (this.logger)
+    console.log(msg);
 }
 
 WP_Node.prototype.setGlobalOptions = function(options) {
@@ -15,23 +19,23 @@ WP_Node.prototype.setGlobalOptions = function(options) {
 WP_Node.prototype.cache = function(options, fn) {
   var self = this;
   var TTL = options.TTL || self.TTL;
-  
-  console.log('cache is')
-  console.log(TTL);
-  console.log('cache is')
+
+  self.log('Cache TTL is ' + TTL);
 
   var url = options.url
-    , db = options.db;
+    , db = options.db
+    , qs = options.qs || {};
 
     //Go Straight to mongo
     db.collection('cache', function(err, collection) {
       collection.findOne({_id: url}, function(err, item) {
 
         if (!item) {
-          console.log('Getting fresh content for ' + url);
+          self.log('Getting fresh content for ' + url);
           self.processRequest({
             request:{
-                url: url
+                url: url,
+                qs: qs
               },
             db: db,
             callback: fn
@@ -44,17 +48,18 @@ WP_Node.prototype.cache = function(options, fn) {
 
           if ( ((currentTime - item.wp_timestamp)/1000) > TTL) {
             
-            console.log('Removing and getting fresh content for ' + url);
+            self.log('Removing and getting fresh content for ' + url);
 
             db.collection('cache', function(err, collection) {
               collection.remove({_id:url}, {safe:true}, function(err, result) {
                 
                 if (err)
-                  console.log(err);
+                  self.log(err);
 
                 self.processRequest({
                   request:{
-                      url: url
+                      url: url,
+                      qs: qs
                     },
                     db: db,
                     callback: fn
@@ -63,7 +68,7 @@ WP_Node.prototype.cache = function(options, fn) {
             });
 
           } else {
-            console.log('Getting cache for ' + url);
+            self.log('Getting cache for ' + url);
             fn(item.content);
           }
 
@@ -74,13 +79,15 @@ WP_Node.prototype.cache = function(options, fn) {
 
 WP_Node.prototype.processRequest = function(obj) {
   // request start
+  var self = this;
+  
     request.get(obj.request, function(e, r, b){
 
       try {
         b = JSON.parse(b);
       } catch (ex) {
         
-        console.log(ex);
+        self.log(ex);
         obj.callback({error: ex});
 
         return;
@@ -95,7 +102,7 @@ WP_Node.prototype.processRequest = function(obj) {
       obj.db.collection('cache', function(err, collection) {
         collection.insert(cache_object, {safe:true}, function(err, result) {
             if (err) {
-              console.log(err);
+              self.log(err);
               if (err.code == 11000)
                 obj.callback({error: err.code});
             } else {

@@ -1,6 +1,6 @@
 # wp-node
 
-Caches WordPress in mongo using a JSON API.
+Caches WordPress in mongo using a JSON API.  It can also cache any json, as long as the request returns an json object.
 
 You can use either WordPress Public API or another plugin like this one: http://wordpress.org/plugins/json-api/
 
@@ -28,6 +28,7 @@ After you receive the object you can do anything you need in your views.
 
 ```javascript 
   wpnode.setGlobalOptions({
-    TTL: 86400  //Cache time is in seconds.  This will cache the data for a day
+    TTL: 86400,  //Cache time is in seconds.  This will cache the data for a day
+    logger: false (default) //Turn on for debug mode
   })
 ```
