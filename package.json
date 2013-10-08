@@ -17,16 +17,13 @@
   "author": "Arnaldo Capo <hello@arnaldocapo.com>",
   "contributors": [
     {
-      "name": "Ian Momyer",
-      "email": "imomyer@directv.com"
-    },
-    {
       "name": "Lex Szentmiklosy",
       "email": "LSzentmiklosy@DIRECTV.com"
     }
   ],
   "license": "MIT",
   "dependencies": {
-    "request": "2.27.0"
+    "request": "2.27.0",
+    "qs": "0.6.5"
   }
 }
