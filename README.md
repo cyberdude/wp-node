@@ -13,8 +13,12 @@ After you receive the object you can do anything you need in your views.
   var wpnode = require('wp-node');
 
   wpnode.cache({
-    url: "https://maps.googleapis.com/maps/api/geocode/json?address=11205&sensor=false",
+    url: "https://maps.googleapis.com/maps/api/geocode/json",
     db: db,  //set your mongo database
+    qs : { //Proxy setting for request. You can add all you request variables such a method, headers, etc...
+      address : 11205,
+      sensor : false
+    }
   }, function(r) {
 
     //Here's your cached data (r)
