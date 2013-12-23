@@ -14,8 +14,8 @@ After you receive the object you can do anything you need in your views.
 
   wpnode.cache({
     url: "https://maps.googleapis.com/maps/api/geocode/json",
-    db: db,  //set your mongo database
-    qs : { //Proxy setting for request. You can add all you request variables such a method, headers, etc...
+    db: db,   //set your mongo database
+    qs : {    //Define you query variables
       address : 11205,
       sensor : false
     }
