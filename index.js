@@ -5,11 +5,14 @@ function WP_Node() {
   //Defaults
   this.TTL = 5400;
   this.logger = false;
+  this.endpoint = '';
 
 }
+
 WP_Node.prototype._isEmptyObject = function(obj) {
   return !Object.keys(obj).length;
 }
+
 WP_Node.prototype.log = function(msg) {
   if (this.logger)
     console.log(msg);
@@ -128,6 +131,5 @@ WP_Node.prototype.processRequest = function(obj) {
       });
     }); //request end
 }
-var wpnode = new WP_Node();
 
-module.exports = wpnode;
+module.exports = new WP_Node();
