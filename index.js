@@ -21,6 +21,7 @@ WP_Node.prototype.log = function(msg) {
 WP_Node.prototype.setGlobalOptions = function(options) {
   for(var key in options)
     this[key] = options[key];
+
 }
 
 WP_Node.prototype.cache = function(options, fn) {
@@ -29,9 +30,9 @@ WP_Node.prototype.cache = function(options, fn) {
 
   self.log('Cache TTL is ' + TTL);
 
-  var url = options.url
-    , db = options.db
-    , _qs = options.qs || {}
+  var url = options.url || self.endpoint
+    , db = options.db   || self.db
+    , _qs = options.qs  || {}
     , _id = '';
 
     if (!self._isEmptyObject(_qs)) {
