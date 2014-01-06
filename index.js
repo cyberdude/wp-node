@@ -1,7 +1,11 @@
+"use strict";
+
 var request = require('request')
-  , qs = require('qs');
+  , qs = require('qs')
+  , _ = require('underscore');
 
 function WP_Node() {
+  
   //Defaults
   this.TTL = 5400;
   this.logger = false;
@@ -10,30 +14,64 @@ function WP_Node() {
 }
 
 WP_Node.prototype._isEmptyObject = function(obj) {
+  
   return !Object.keys(obj).length;
 }
 
 WP_Node.prototype.log = function(msg) {
+  
   if (this.logger)
     console.log(msg);
 }
 
 WP_Node.prototype.setGlobalOptions = function(options) {
+  
   for(var key in options)
     this[key] = options[key];
 
 }
+WP_Node.prototype.generateSiteMap = function(options){
+
+  var self      = this
+    , options   = options           || {}
+    , endpoint  = options.endpoint  || self.endpoint
+    , pre_link  = options.pre_link  || ''
+    , sitemap   = [];
+
+  self.log('Generating WordPress sitemap from ' + endpoint);
+
+  request({
+    url : endpoint,
+    qs  : {
+      post_type : 'post'
+    }
+  }, function(e, r, posts){
+
+    _.each(posts, function(post){
+      sitemap.push({
+        url         : pre_link + '/' + post.slug,
+        changefreq  : 'daily',
+        priority    : 0.5
+      });
+    });
+
+    return sitemap;
+  })
+
+  
+}
 
 WP_Node.prototype.cache = function(options, fn) {
+  
   var self = this;
   var TTL = options.TTL || self.TTL;
 
   self.log('Cache TTL is ' + TTL);
 
-  var url = options.url || self.endpoint
-    , db = options.db   || self.db
-    , _qs = options.qs  || {}
-    , _id = '';
+  var url   = options.url || self.endpoint
+    , db    = options.db  || self.db
+    , _qs   = options.qs  || {}
+    , _id   = '';
 
     if (!self._isEmptyObject(_qs)) {
       self.log('_qs defined');
