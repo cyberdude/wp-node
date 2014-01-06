@@ -30,7 +30,7 @@ WP_Node.prototype.setGlobalOptions = function(options) {
     this[key] = options[key];
 
 }
-WP_Node.prototype.generateSiteMap = function(options){
+WP_Node.prototype.generateSiteMap = function(options, cb){
 
   var self      = this
     , options   = options           || {}
@@ -46,6 +46,9 @@ WP_Node.prototype.generateSiteMap = function(options){
       post_type : 'post'
     }
   }, function(e, r, posts){
+    
+    if (typeof posts === 'string')
+      posts = JSON.parse(posts);
 
     _.each(posts, function(post){
       sitemap.push({
@@ -55,9 +58,8 @@ WP_Node.prototype.generateSiteMap = function(options){
       });
     });
 
-    return sitemap;
+    cb(e, sitemap);
   })
-
   
 }
 
