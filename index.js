@@ -40,6 +40,10 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
 
   self.log('Generating WordPress sitemap from ' + endpoint);
 
+  if (!endpoint 
+        || typeof endpoint === 'undefined')
+      throw new Error('An WordPress endpoint is required to generate a WP Site Map');
+
   request({
     url : endpoint,
     qs  : {
