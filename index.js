@@ -10,6 +10,9 @@ function WP_Node() {
   this.TTL = 5400;
   this.logger = false;
   this.endpoint = '';
+  this.db = null;
+  this.endpoint = '';
+  this.url = '';
 
 }
 
@@ -84,6 +87,16 @@ WP_Node.prototype.cache = function(options, fn) {
       _id = qs.stringify(_qs);
     }      
     
+    if (!url) {
+      fn(
+        null, {
+          code      : 100,
+          message   : "No URL endpoint provided."
+        }
+      );
+      return;
+    }
+
     _id = url + ( (url.indexOf('?') > -1) ? _id : '?' + _id );
 
     self.log('Final ID to mongo is: ' + _id);
@@ -133,7 +146,7 @@ WP_Node.prototype.cache = function(options, fn) {
 
           } else {
             self.log('Getting cache for ' + _id);
-            fn(item.content);
+            fn(item.content, null);
           }
 
         }
@@ -150,10 +163,8 @@ WP_Node.prototype.processRequest = function(obj) {
       try {
         b = JSON.parse(b);
       } catch (ex) {
-        
         self.log(ex);
         obj.callback({error: ex});
-
         return;
       }
       
@@ -167,10 +178,16 @@ WP_Node.prototype.processRequest = function(obj) {
         collection.insert(cache_object, {safe:true}, function(err, result) {
             if (err) {
               self.log(err);
-              if (err.code == 11000)
-                obj.callback({error: err.code});
+             
+              obj.callback(
+                null, {
+                  code              : 110, 
+                  message           : "MongoDB error",
+                  extra_information : err.code
+                }
+              );
             } else {
-                obj.callback(result[0].content);
+                obj.callback(result[0].content, null);
             }
         });
       });
