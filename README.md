@@ -39,7 +39,7 @@ After you receive the object you can do anything you need in your views.
   })
 ```
 
-## WordPress Functions (Alpha - use at your own risk)
+## WordPress Functions (Alpha)
 
 ### Helping with sitemaps
 
