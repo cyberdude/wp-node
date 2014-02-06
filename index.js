@@ -7,7 +7,7 @@ var request = require('request')
 function WP_Node() {
   
   //Defaults
-  this.TTL = 5400;
+  this.TTL = 86400;
   this.logger = false;
   this.endpoint = '';
   this.db = null;
@@ -41,11 +41,17 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
     , pre_link  = options.pre_link  || ''
     , sitemap   = [];
 
-  self.log('Generating WordPress sitemap from ' + endpoint);
-
   if (!endpoint 
-        || typeof endpoint === 'undefined')
-      throw new Error('An WordPress endpoint is required to generate a WP Site Map');
+        || typeof endpoint === 'undefined') {
+    cb({
+        code      : 120,
+        message   : 'A WordPress endpoint is required to generate a WP Site Map' 
+      }, null
+    );
+    return;
+  }
+
+  self.log('Generating WordPress sitemap from ' + endpoint);
 
   request({
     url : endpoint,

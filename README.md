@@ -13,11 +13,11 @@ After you receive the object you can do anything you need in your views.
   var wpnode = require('wp-node');
 
   wpnode.cache({
-    url: "https://maps.googleapis.com/maps/api/geocode/json",
-    db: db,   //set your mongo database
-    qs : {    //Define you query variables
+    url   : "https://maps.googleapis.com/maps/api/geocode/json",
+    db    : db,   //set your mongo database
+    qs    : {    //Define you query variables
       address : 11205,
-      sensor : false
+      sensor  : false
     }
   }, function(r) {
 
@@ -32,7 +32,27 @@ After you receive the object you can do anything you need in your views.
 
 ```javascript 
   wpnode.setGlobalOptions({
-    TTL: 86400,  //Cache time is in seconds.  This will cache the data for a day
-    logger: false //(default) Turn on for debug mode
+    TTL       : 86400,  //(Optional/Default) Cache time is in seconds.  This will cache the data for a day
+    logger    : false,  //(Optional/Default) Turn on for debug mode
+    db        : db,     //(Optional) Required if you don't plan to pass your mongo db object when calling the cache method
+    endpoint  : 'http://www.yourwordpress.com/api/' //(Required in order to generate a sitemap)
   })
+```
+
+## WordPress Functions (Alpha - use at your own risk)
+
+### Helping with sitemaps
+
+```javascript
+
+wpnode.generateSiteMap({
+      pre_link: '/blog/post'
+    }, function(err, posts){
+
+    if (err) {
+      console.log(err.message);
+      return;
+    }
+  })
+
 ```
