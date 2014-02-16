@@ -1,6 +1,6 @@
 {
   "name": "wp-node",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Caches WordPress in mongo using WordPress Jetpack JSON API",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,6 @@
     "mongodb"
   ],
   "author": "Arnaldo Capo <hello@arnaldocapo.com>",
-  "contributors": [
-    {
-      "name": "Lex Szentmiklosy",
-      "email": "LSzentmiklosy@DIRECTV.com"
-    }
-  ],
   "license": "MIT",
   "dependencies": {
     "request": "2.27.0",

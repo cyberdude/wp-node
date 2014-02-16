@@ -1,18 +1,19 @@
 "use strict";
 
-var request = require('request')
-  , qs = require('qs')
-  , _ = require('underscore');
+var request   = require('request')
+  , qs        = require('qs')
+  , _         = require('underscore');
 
 function WP_Node() {
   
   //Defaults
-  this.TTL = 86400;
-  this.logger = false;
-  this.endpoint = '';
-  this.db = null;
-  this.endpoint = '';
-  this.url = '';
+  this.TTL        = 86400;
+  this.logger     = false;
+  this.endpoint   = '';
+  this.db         = null;
+  this.endpoint   = '';
+  this.url        = '';
+  this.secret     = '12345';
 
 }
 
@@ -170,6 +171,7 @@ WP_Node.prototype.processRequest = function(obj) {
         b = JSON.parse(b);
       } catch (ex) {
         self.log(ex);
+        //TODO: This need to change to our error model
         obj.callback({error: ex});
         return;
       }
@@ -200,4 +202,8 @@ WP_Node.prototype.processRequest = function(obj) {
     }); //request end
 }
 
-module.exports = new WP_Node();
+var finalObject = new WP_Node();
+
+finalObject.wordpress = require('./lib/wordpress.js')(finalObject);
+
+module.exports = finalObject;
