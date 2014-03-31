@@ -108,6 +108,9 @@ WP_Node.prototype.cache = function(options, fn) {
 
     self.log('Final ID to mongo is: ' + _id);
 
+    //Let's force the wordpress feed channel
+    _qs.feed = 'json';
+
     //Go Straight to mongo
     db.collection('cache', function(err, collection) {
       collection.findOne({_id: _id}, function(err, item) {
