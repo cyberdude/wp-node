@@ -66,7 +66,7 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
 
     _.each(posts, function(post){
       sitemap.push({
-        url         : pre_link + '/' + post.slug,
+        url         : pre_link + '/' + post.slug + '/' + post.id,
         changefreq  : 'daily',
         priority    : 0.5
       });
