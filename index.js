@@ -5,7 +5,7 @@ var request   = require('request')
   , _         = require('underscore');
 
 function WP_Node() {
-  
+
   //Defaults
   this.TTL        = 86400;
   this.logger     = false;
@@ -18,18 +18,18 @@ function WP_Node() {
 }
 
 WP_Node.prototype._isEmptyObject = function(obj) {
-  
+
   return !Object.keys(obj).length;
 }
 
 WP_Node.prototype.log = function(msg) {
-  
+
   if (this.logger)
     console.log(msg);
 }
 
 WP_Node.prototype.setGlobalOptions = function(options) {
-  
+
   for(var key in options)
     this[key] = options[key];
 
@@ -42,11 +42,11 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
     , pre_link  = options.pre_link  || ''
     , sitemap   = [];
 
-  if (!endpoint 
+  if (!endpoint
         || typeof endpoint === 'undefined') {
     cb({
         code      : 120,
-        message   : 'A WordPress endpoint is required to generate a WP Site Map' 
+        message   : 'A WordPress endpoint is required to generate a WP Site Map'
       }, null
     );
     return;
@@ -60,7 +60,7 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
       post_type : 'post'
     }
   }, function(e, r, posts){
-    
+
     if (typeof posts === 'string')
       posts = JSON.parse(posts);
 
@@ -74,11 +74,11 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
 
     cb(e, sitemap);
   })
-  
+
 }
 
 WP_Node.prototype.cache = function(options, fn) {
-  
+
   var self = this;
   var TTL = options.TTL || self.TTL;
 
@@ -92,8 +92,8 @@ WP_Node.prototype.cache = function(options, fn) {
     if (!self._isEmptyObject(_qs)) {
       self.log('_qs defined');
       _id = qs.stringify(_qs);
-    }      
-    
+    }
+
     if (!url) {
       fn(
         null, {
@@ -109,36 +109,38 @@ WP_Node.prototype.cache = function(options, fn) {
     self.log('Final ID to mongo is: ' + _id);
 
     //Let's force the wordpress feed channel
-    _qs.feed = 'json';
+    if (options.forceWPJSONFeed)
+      _qs.feed = 'json';
 
     //Go Straight to mongo
     db.collection('cache', function(err, collection) {
-      collection.findOne({_id: _id}, function(err, item) {
+      collection.findOne({ id: _id, invalid : undefined }, function(err, item) {
 
         if (!item) {
           self.log('Getting fresh content for ' + _id);
+
           self.processRequest({
             request:{
                 url: url,
                 qs: _qs
               },
-            _id: _id,
+            id: _id,
             db: db,
             callback: fn
           });
-          
+
         } else {
 
           //Check if we are over the cache limit
           var currentTime = +new Date();
 
           if ( ((currentTime - item.wp_timestamp)/1000) > TTL) {
-            
+
             self.log('Removing and getting fresh content for ' + _id);
 
             db.collection('cache', function(err, collection) {
-              collection.remove({_id: _id}, {safe:true}, function(err, result) {
-                
+              collection.update({ id: _id, invalid : undefined }, { $set : { invalid : true } }, {multi : true}, function(err, result) {
+
                 if (err)
                   self.log(err);
 
@@ -147,7 +149,7 @@ WP_Node.prototype.cache = function(options, fn) {
                       url: url,
                       qs: _qs
                     },
-                    _id: _id,
+                    id: _id,
                     db: db,
                     callback: fn
                 });
@@ -155,7 +157,10 @@ WP_Node.prototype.cache = function(options, fn) {
             });
 
           } else {
+
             self.log('Getting cache for ' + _id);
+            self.log(item.wp_timestamp);
+
             fn(item.content, null);
           }
 
@@ -167,7 +172,7 @@ WP_Node.prototype.cache = function(options, fn) {
 WP_Node.prototype.processRequest = function(obj) {
   // request start
   var self = this;
-  
+
     request.get(obj.request, function(e, r, b){
 
       try {
@@ -178,21 +183,21 @@ WP_Node.prototype.processRequest = function(obj) {
         obj.callback({error: ex});
         return;
       }
-      
+
       var cache_object = {
-        _id: obj._id, 
-        content: b,
-        wp_timestamp: +new Date()
+        id            : obj.id,
+        content       : b,
+        wp_timestamp  : +new Date()
       }
 
       obj.db.collection('cache', function(err, collection) {
-        collection.insert(cache_object, {safe:true}, function(err, result) {
+        collection.insert(cache_object, { safe:true }, function(err, result) {
             if (err) {
               self.log(err);
-             
+
               obj.callback(
                 null, {
-                  code              : 110, 
+                  code              : 110,
                   message           : "MongoDB error",
                   extra_information : err.code
                 }
