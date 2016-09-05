@@ -14,7 +14,6 @@ function WP_Node() {
   this.endpoint   = '';
   this.url        = '';
   this.secret     = '12345';
-
 }
 
 WP_Node.prototype._isEmptyObject = function(obj) {
