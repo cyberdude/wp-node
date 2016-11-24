@@ -39,6 +39,7 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
     , options   = options           || {}
     , endpoint  = options.endpoint  || self.endpoint
     , pre_link  = options.pre_link  || ''
+    , priority  = options.priority  || 0.5
     , sitemap   = [];
 
   if (!endpoint
@@ -67,7 +68,7 @@ WP_Node.prototype.generateSiteMap = function(options, cb){
       sitemap.push({
         url         : pre_link + '/' + post.slug + '/' + post.id,
         changefreq  : 'daily',
-        priority    : 0.5
+        priority    : priority
       });
     });
 
