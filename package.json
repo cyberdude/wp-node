@@ -17,8 +17,8 @@
   "author": "Arnaldo Capo <hello@arnaldocapo.com>",
   "license": "MIT",
   "dependencies": {
-    "request": "2.27.0",
-    "qs": "0.6.5",
+    "qs": "^6.4.0",
+    "request": "^2.81.0",
     "underscore": "1.5.2"
   }
 }
