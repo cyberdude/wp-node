@@ -1,8 +1,10 @@
 "use strict";
 
-var request   = require('request')
+const request   = require('request')
   , qs        = require('qs')
   , _         = require('underscore');
+
+const util = require('util');
 
 function WP_Node() {
 
@@ -203,7 +205,7 @@ WP_Node.prototype.processRequest = function(obj) {
                 }
               );
             } else {
-                obj.callback(result[0].content, null);
+              obj.callback(cache_object.content, null);
             }
         });
       });
